@@ -12,7 +12,7 @@ def create_app():
     migrate.init_app(app, db)
     cors.init_app(app)
 
-    from routes import register_routes
-    register_routes(app)
+    # from routes import register_routes
+    # register_routes(app)
 
     return app
