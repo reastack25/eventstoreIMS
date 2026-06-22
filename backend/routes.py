@@ -1,7 +1,7 @@
 # routes.py
 
 from flask import Blueprint
-
+from api.inventory.routes import inventory_bp
 api = Blueprint("api",__name__)
 
 @api.route("/")
@@ -12,3 +12,6 @@ def health_check():
 
 def register_routes(app):
     app.register_blueprint(api)
+
+def register_routes(app):
+    app.register_blueprint(inventory_bp)
