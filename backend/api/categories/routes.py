@@ -19,3 +19,12 @@ def create_category():
     return (
         category_schema.dump(category),201
     )
+
+@category_bp.route("/", methods=["GET"])
+def get_categories():
+
+    categories = CategoryService.get_categories()
+
+    return jsonify(
+        categories_schema.dump(categories)
+    )
