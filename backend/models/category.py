@@ -9,3 +9,6 @@ class Category(BaseModel):
     description = db.Column(db.Text)
 
     items = db.relationship("Item",backref="category",lazy=True)
+
+    def __repr__(self):
+       return f"<Category {self.name}>"
