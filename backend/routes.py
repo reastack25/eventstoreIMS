@@ -2,6 +2,7 @@
 
 from flask import Blueprint
 from api.inventory.routes import inventory_bp
+from api.categories.routes import category_bp
 api = Blueprint("api",__name__)
 
 @api.route("/")
@@ -15,3 +16,6 @@ def register_routes(app):
 
 def register_routes(app):
     app.register_blueprint(inventory_bp)
+
+def register_routes(app):
+    app.register_blueprint(category_bp)
