@@ -1,5 +1,6 @@
 from flask import Flask
 from extensions import (db,jwt,migrate,cors)
+from models.category import Category
 
 def create_app():
     app = Flask(__name__)
