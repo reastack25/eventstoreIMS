@@ -19,3 +19,7 @@ def register_routes(app):
 
 def register_routes(app):
     app.register_blueprint(category_bp)
+
+def register_routes(app):
+    app.register_blueprint(category_bp)
+    app.register_blueprint(inventory_bp)
