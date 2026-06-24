@@ -1,5 +1,5 @@
 from repositories.inventory_repo import InventoryRepository
-
+from models.item import Item
 
 class InventoryService:
 
