@@ -25,3 +25,11 @@ def create_item():
     return (
         item_schema.dump(item),201
     )
+
+@inventory_bp.route("/", methods=["GET"])
+def get_items():
+
+    items = InventoryService.get_items()
+    return jsonify(
+        items_schema.dump(items)
+    )
