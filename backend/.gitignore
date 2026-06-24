@@ -5,4 +5,4 @@ __pycache__/
 instance/
 uploads/
 .mypy_cache/
-.pytest_cache/
+.pytest_cache/0O
