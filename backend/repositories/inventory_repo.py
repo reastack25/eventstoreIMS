@@ -12,3 +12,7 @@ class InventoryRepository:
         db.session.add(item)
         db.session.commit()
         return item
+
+    @staticmethod
+    def get_by_id(item_id):
+        return Item.query.get(item_id)
