@@ -10,12 +10,12 @@ inventory_bp = Blueprint("inventory", __name__,url_prefix="/api/inventory")
 item_schema = ItemSchema()
 items_schema = ItemSchema(many=True)
 
-@inventory_bp.route("/")
-def health():
-    return {
-        "module": "inventory",
-        "status": "running"
-    }
+# @inventory_bp.route("//")
+# def health():
+#     return {
+#         "module": "inventory",
+#         "status": "running"
+#     }
 
 @inventory_bp.route("/", methods=["POST"])
 def create_item():
