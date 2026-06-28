@@ -5,7 +5,7 @@ from flask import request
 from services.inventory_service import InventoryService
 from schemas.inventory_schema import ItemSchema
 
-inventory_bp = Blueprint("inventory", __name__,url_prefix="/api/inventory")
+inventory_bp = Blueprint("inventory", __name__,url_prefix="/api/v1/inventory")
 
 item_schema = ItemSchema()
 items_schema = ItemSchema(many=True)

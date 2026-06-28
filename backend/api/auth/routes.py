@@ -6,7 +6,7 @@ from services.auth_service import AuthService
 from schemas.auth_schema import RegisterSchema,LoginSchema
 from repositories.user_repo import UserRepository
 
-auth_bp = Blueprint("auth",__name__,url_prefix="/api/auth"
+auth_bp = Blueprint("auth",__name__,url_prefix="/api/v1/auth"
 )
 
 register_schema = RegisterSchema()
