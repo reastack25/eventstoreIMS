@@ -27,9 +27,23 @@ def create_item():
     )
 
 @inventory_bp.route("/", methods=["GET"])
-def get_items():
+def get_inventory():
 
-    items = InventoryService.get_items()
-    return jsonify(
-        items_schema.dump(items)
-    )
+    page     = request.args.get("page", 1, type=int)
+    per_page = request.args.get("per_page", 20, type=int)
+
+    per_page = min(per_page, 100)
+
+    pagination = ItemRepository.get_all_paginated(page, per_page)
+
+    return jsonify({
+        "items": [item.to_dict() for item in pagination.items],
+        "meta": {
+            "page":        pagination.page,
+            "per_page":    pagination.per_page,
+            "total_items": pagination.total,
+            "total_pages": pagination.pages,
+            "has_next":    pagination.has_next,
+            "has_prev":    pagination.has_prev
+        }
+    }), 200

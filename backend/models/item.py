@@ -16,3 +16,14 @@ class Item(BaseModel):
     image_url = db.Column(db.String(500))
 
     category_id = db.Column(db.Integer,db.ForeignKey("categories.id"),nullable=False)
+
+
+    def to_dict(self):
+    return {
+        "id":          self.id,
+        "name":        self.name,
+        "quantity":    self.quantity,
+        "category":    self.category,
+        "is_active":   self.is_active,
+        "created_at":  self.created_at.isoformat()
+    }
