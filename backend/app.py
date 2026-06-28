@@ -15,6 +15,8 @@ def create_app():
     migrate.init_app(app, db)
     cors.init_app(app)
     register_error_handlers(app)
+    configure_logging()
+    from utils.logger import configure_logging
 
     from routes import register_routes
     register_routes(app)
