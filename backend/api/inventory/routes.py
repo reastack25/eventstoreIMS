@@ -1,7 +1,7 @@
 from flask import Blueprint
 from flask import jsonify
 from flask import request
-
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from services.inventory_service import InventoryService
 from schemas.inventory_schema import ItemSchema
 
@@ -42,7 +42,7 @@ def get_inventory():
         }
     }), 200
 
-@inventory_tx_bp.route("/receive", methods=["POST"])
+@inventory_bp.route("/receive", methods=["POST"])
 @jwt_required()
 def receive():
     data         = request.get_json()
@@ -61,7 +61,7 @@ def receive():
         "item":      item.to_dict()
     }), 200
 
-@inventory_tx_bp.route("/dispatch", methods=["POST"])
+@inventory_bp.route("/dispatch", methods=["POST"])
 @jwt_required()
 def dispatch():
     data         = request.get_json()
@@ -83,7 +83,7 @@ def dispatch():
         "item":    item.to_dict()
     }), 200
 
-@inventory_tx_bp.route("/return", methods=["POST"])
+@inventory_bp.route("/return", methods=["POST"])
 @jwt_required()
 def return_stock():
     data         = request.get_json()
@@ -102,7 +102,7 @@ def return_stock():
         "item":    item.to_dict()
     }), 200
 
-@inventory_tx_bp.route("/damage", methods=["POST"])
+@inventory_bp.route("/damage", methods=["POST"])
 @jwt_required()
 def damage():
     data         = request.get_json()
