@@ -61,3 +61,25 @@ def receive():
         "item":      item.to_dict()
     }), 200
 
+@inventory_tx_bp.route("/dispatch", methods=["POST"])
+@jwt_required()
+def dispatch():
+    data         = request.get_json()
+    performed_by = get_jwt_identity()
+
+    if not data.get("item_id") or not data.get("quantity"):
+        return jsonify({"error": "item_id and quantity are required"}), 422
+
+    if data["quantity"] <= 0:
+        return jsonify({"error": "Quantity must be greater than zero"}), 422
+
+    try:
+        item = InventoryService.dispatch_stock(data, performed_by)
+    except ValueError as e:
+        return jsonify({"error": str(e)}), 409
+
+    return jsonify({
+        "message": "Stock dispatched successfully",
+        "item":    item.to_dict()
+    }), 200
+
