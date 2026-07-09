@@ -3,18 +3,19 @@
 from flask import Blueprint, request, jsonify
 from marshmallow import ValidationError
 from services.auth_service import AuthService
-from schemas.auth_schema import RegisterSchema,LoginSchema
+from schemas.auth_schema import RegisterSchema, LoginSchema
 from repositories.user_repo import UserRepository
 
-auth_bp = Blueprint("auth",__name__,url_prefix="/api/v1/auth"
-)
+auth_bp = Blueprint("auth", __name__, url_prefix="/api/v1/auth")
 
 register_schema = RegisterSchema()
+login_schema    = LoginSchema()
 
 @auth_bp.route("/register", methods=["POST"])
 def register():
 
-     data = request.get_json()
+    data = request.get_json()
+
     try:
         validated_data = register_schema.load(data)
     except ValidationError as e:
@@ -24,22 +25,24 @@ def register():
     if existing:
         return jsonify({"error": "Email already registered"}), 409
 
-  
     user = AuthService.register(validated_data)
-       return jsonify({
+
+    return jsonify({
         "message": "User created successfully",
         "user": {
-            "id": user.id,
+            "id":        user.id,
             "full_name": user.full_name,
-            "email": user.email,
-            "role": user.role
+            "email":     user.email,
+            "role":      user.role
         }
     }), 201
+
 
 @auth_bp.route("/login", methods=["POST"])
 def login():
 
     data = request.get_json()
+
     try:
         validated_data = login_schema.load(data)
     except ValidationError as e:
@@ -52,14 +55,14 @@ def login():
 
     if token is None:
         return jsonify({"error": "Invalid email or password"}), 401
-   
+
     return jsonify({
-        "message": "Login successful",
+        "message":      "Login successful",
         "access_token": token,
         "user": {
-            "id": result.id,
+            "id":        result.id,
             "full_name": result.full_name,
-            "email": result.email,
-            "role": result.role
+            "email":     result.email,
+            "role":      result.role
         }
     }), 200

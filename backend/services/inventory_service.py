@@ -2,6 +2,7 @@ from repositories.inventory_repo import InventoryRepository
 from models.item import Item
 from models.inventory_transaction import InventoryTransaction
 from models.audit_log import AuditLog
+from extensions import db
 
 class InventoryService:
 
