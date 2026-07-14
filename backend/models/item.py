@@ -15,6 +15,8 @@ class Item(BaseModel):
     status      = db.Column(db.String(50), default="ACTIVE")
     image_url   = db.Column(db.String(500))
 
+    transactions = db.relationship("InventoryTransaction",backref="item",lazy=True,cascade="all, delete-orphan")
+
     def to_dict(self):
         return {
             "id":         self.id,
