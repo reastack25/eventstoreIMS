@@ -3,7 +3,7 @@ class Role:
     ADMIN         = "ADMIN"
     STORE_MANAGER = "STORE_MANAGER"
     STORE_KEEPER  = "STORE_KEEPER"
-    SITE MANAGER  = "SITE MANAGER"
+    SITE_MANAGER  = "SITE MANAGER"
 
 
 ROLE_PERMISSIONS = {
@@ -39,7 +39,7 @@ ROLE_PERMISSIONS = {
         "report_damage",
         "view_dashboard"
     ],
-    Role.SITE MANAGER: [
+    Role.SITE_MANAGER: [
         "view_dashboard",
         "manage_job_cards"
     ]
