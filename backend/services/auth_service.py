@@ -12,7 +12,7 @@ class AuthService:
     def register(data):
         # Validate role
         role = data.get("role", Role.STORE_KEEPER)
-        valid_roles = [Role.ADMIN, Role.STORE_MANAGER, Role.STORE_KEEPER, Role.FIELD_STAFF]
+        valid_roles = [Role.ADMIN, Role.STORE_MANAGER, Role.STORE_KEEPER, Role.SITE_MANAGER]
 
         if role not in valid_roles:
             raise ValueError(f"Invalid role. Must be one of: {', '.join(valid_roles)}")

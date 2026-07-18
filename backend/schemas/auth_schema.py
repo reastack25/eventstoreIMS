@@ -13,7 +13,7 @@ class RegisterSchema(Schema):
             Role.ADMIN,
             Role.STORE_MANAGER,
             Role.STORE_KEEPER,
-            Role.FIELD_STAFF
+            Role.SITE_MANAGER
         ])
     )
 
