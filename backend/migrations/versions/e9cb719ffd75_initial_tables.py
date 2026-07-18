@@ -1,8 +1,8 @@
-"""add events and job cards tables
+"""initial tables
 
-Revision ID: 15487c7b869f
-Revises: cd489fd73579
-Create Date: 2026-07-11 16:03:35.832594
+Revision ID: e9cb719ffd75
+Revises: 
+Create Date: 2026-07-17 11:16:49.861028
 
 """
 from alembic import op
@@ -10,8 +10,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '15487c7b869f'
-down_revision = 'cd489fd73579'
+revision = 'e9cb719ffd75'
+down_revision = None
 branch_labels = None
 depends_on = None
 
