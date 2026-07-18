@@ -5,15 +5,11 @@ class InventoryTransaction(BaseModel):
     __tablename__ = "inventory_transactions"
 
     item_id          = db.Column(db.Integer, db.ForeignKey("items.id"), nullable=False)
-    transaction_type = db.Column(db.String(50), nullable=False)  # RECEIVE, DISPATCH, RETURN, DAMAGE, ADJUSTMENT
+    transaction_type = db.Column(db.String(50), nullable=False)
     quantity         = db.Column(db.Integer, nullable=False)
-    reference_number = db.Column(db.String(100))                 # e.g. JC-001
+    reference_number = db.Column(db.String(100))
     remarks          = db.Column(db.Text)
     performed_by     = db.Column(db.Integer, db.ForeignKey("users.id"))
-
-    # Relationships
-    item      = db.relationship("Item", backref="transactions")
-    performer = db.relationship("User", backref="transactions")
 
     def to_dict(self):
         return {

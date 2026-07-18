@@ -9,5 +9,5 @@ class DamageLog(BaseModel):
     reason      = db.Column(db.Text)
     reported_by = db.Column(db.Integer, db.ForeignKey("users.id"))
 
-    item     = db.relationship("Item", backref="damage_logs")
-    reporter = db.relationship("User", backref="damage_logs")
+    item     = db.relationship("Item", backref="reported_damages")
+    reporter = db.relationship("User", backref="reported_damages")

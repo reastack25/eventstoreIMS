@@ -13,7 +13,6 @@ class User(BaseModel):
     role = db.Column(db.String(50),nullable=False)
     is_active = db.Column(db.Boolean,default=True)
 
-    transactions = db.relationship("InventoryTransaction",backref="user",lazy=True)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
