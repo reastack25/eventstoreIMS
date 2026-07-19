@@ -1,4 +1,4 @@
-from repositories.inventory_repo import InventoryRepository
+from repositories.inventory_repo import ItemRepository
 from models.item import Item
 from models.inventory_transaction import InventoryTransaction
 from models.audit_log import AuditLog
@@ -17,11 +17,11 @@ class InventoryService:
             status=data.get("status", "ACTIVE"),
             category_id=data["category_id"]
         )
-        return InventoryRepository.create(item)
+        return ItemRepository.create(item)
 
     @staticmethod
     def get_items():
-        return InventoryRepository.get_all()
+        return ItemRepository.get_all()
 
 
     @staticmethod
