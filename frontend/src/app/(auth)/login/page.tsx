@@ -5,8 +5,6 @@ import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Package } from "lucide-react";
 
 export default function LoginPage() {
   const { login, loading, error } = useAuth();
@@ -19,64 +17,119 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
+    <div
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{ backgroundColor: "#0a0a0a" }}
+    >
       <div className="w-full max-w-md">
 
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <div className="bg-slate-900 text-white p-2 rounded-lg">
-            <Package className="h-6 w-6" />
+        <div className="text-center mb-10">
+          <div className="inline-flex flex-col items-center">
+            <div className="relative mb-2">
+              <span
+                className="text-5xl font-black tracking-tight text-white"
+                style={{ letterSpacing: "-0.02em" }}
+              >
+                elroyy
+              </span>
+              <span
+                className="text-5xl font-black tracking-tight"
+                style={{ color: "#e63329" }}
+              >
+                //
+              </span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="h-px w-12" style={{ backgroundColor: "#e63329" }} />
+              <span
+                className="text-xs font-bold tracking-[0.3em] text-gray-400 uppercase"
+              >
+                Events
+              </span>
+              <div className="h-px w-12" style={{ backgroundColor: "#e63329" }} />
+            </div>
+            <p className="text-gray-500 text-sm mt-3 tracking-wider uppercase">
+              Inventory Management
+            </p>
           </div>
-          <span className="text-2xl font-bold text-slate-900">ElroyyIMS</span>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Sign in</CardTitle>
-            <CardDescription>
-              Enter your credentials to access the system
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Card */}
+        <div
+          className="rounded-xl p-8 border"
+          style={{
+            backgroundColor: "#111111",
+            borderColor: "#2a2a2a"
+          }}
+        >
+          <h2 className="text-white text-xl font-semibold mb-1">Sign in</h2>
+          <p className="text-gray-500 text-sm mb-6">
+            Enter your credentials to access the system
+          </p>
 
-              <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="you@elroyy.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
+          <form onSubmit={handleSubmit} className="space-y-5">
+
+            <div className="space-y-2">
+              <Label className="text-gray-400 text-sm">Email</Label>
+              <Input
+                type="email"
+                placeholder="you@elroyy.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="border text-white placeholder:text-gray-600 focus:ring-1"
+                style={{
+                  backgroundColor: "#1a1a1a",
+                  borderColor: "#2a2a2a",
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label className="text-gray-400 text-sm">Password</Label>
+              <Input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="border text-white placeholder:text-gray-600 focus:ring-1"
+                style={{
+                  backgroundColor: "#1a1a1a",
+                  borderColor: "#2a2a2a",
+                }}
+              />
+            </div>
+
+            {error && (
+              <div
+                className="text-sm px-4 py-3 rounded-lg border"
+                style={{
+                  backgroundColor: "#2a0f0f",
+                  borderColor: "#e63329",
+                  color: "#f87171"
+                }}
+              >
+                {error}
               </div>
+            )}
 
-              <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
+            <Button
+              type="submit"
+              className="w-full font-semibold text-white transition-opacity hover:opacity-90"
+              style={{ backgroundColor: "#e63329" }}
+              disabled={loading}
+            >
+              {loading ? "Signing in..." : "Sign in"}
+            </Button>
 
-              {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 text-sm px-3 py-2 rounded-md">
-                  {error}
-                </div>
-              )}
+          </form>
+        </div>
 
-              <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Signing in..." : "Sign in"}
-              </Button>
-
-            </form>
-          </CardContent>
-        </Card>
+        <p className="text-center text-gray-600 text-xs mt-6">
+          ElroyyIMS · Inventory Management System
+        </p>
       </div>
     </div>
   );

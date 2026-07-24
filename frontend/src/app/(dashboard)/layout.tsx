@@ -15,23 +15,25 @@ export default function DashboardLayout({
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    const token = Cookies.get("access_token");
+    const token  = Cookies.get("access_token");
     const stored = localStorage.getItem("user");
 
     if (!token || !stored) {
       router.push("/login");
       return;
     }
-
     setUser(JSON.parse(stored));
   }, []);
 
   if (!user) return null;
 
   return (
-    <div className="flex h-screen bg-slate-50">
+    <div className="flex h-screen" style={{ backgroundColor: "#0f0f0f" }}>
       <Sidebar user={user} />
-      <main className="flex-1 overflow-auto p-6">
+      <main
+        className="flex-1 overflow-auto p-6"
+        style={{ backgroundColor: "#f8f8f8" }}
+      >
         {children}
       </main>
     </div>

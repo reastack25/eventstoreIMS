@@ -12,6 +12,7 @@ import {
   TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { ClipboardList, ChevronDown, ChevronUp, Plus, X, Trash2 } from "lucide-react";
+import React from "react";
 
 const statusColors: Record<string, string> = {
   DRAFT:      "bg-slate-100 text-slate-600",
@@ -233,8 +234,8 @@ export default function JobCardsPage() {
               </TableHeader>
               <TableBody>
                 {jobCards.map(jc => (
-                  <>
-                    <TableRow key={jc.id}>
+                  <React.Fragment key={jc.id}>
+                    <TableRow>
                       <TableCell className="font-mono font-medium">{jc.reference}</TableCell>
                       <TableCell className="text-slate-500">Event #{jc.event_id}</TableCell>
                       <TableCell>
@@ -294,7 +295,7 @@ export default function JobCardsPage() {
                         </TableCell>
                       </TableRow>
                     )}
-                  </>
+                  </React.Fragment>
                 ))}
               </TableBody>
             </Table>
