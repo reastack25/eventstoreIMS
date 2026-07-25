@@ -1,25 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useAuth } from "@/hooks/useAuth";
 import { User } from "@/types/auth";
 import { cn } from "@/lib/utils";
 import {
-  LayoutDashboard,
-  Package,
-  ClipboardList,
-  Calendar,
-  LogOut,
-  ChevronRight
+  LayoutDashboard, Package, ClipboardList,
+  Calendar, AlertTriangle, LogOut, ChevronRight
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard",  icon: LayoutDashboard },
   { href: "/inventory", label: "Inventory",  icon: Package },
   { href: "/job-cards", label: "Job Cards",  icon: ClipboardList },
   { href: "/events",    label: "Events",     icon: Calendar },
+  { href: "/damages",   label: "Damage Log", icon: AlertTriangle },
 ];
 
 const BRAND_RED = "#e63329";
@@ -34,39 +31,20 @@ export default function Sidebar({ user }: { user: User }) {
       style={{ backgroundColor: "#0a0a0a", borderColor: "#1a1a1a" }}
     >
       {/* Logo */}
-      <div
-        className="p-6 border-b"
-        style={{ borderColor: "#1a1a1a" }}
-      >
-        <div className="flex flex-col">
-          <div className="flex items-baseline gap-0.5">
-            <span className="text-2xl font-black text-white tracking-tight">
-              elroyy
-            </span>
-            <span
-              className="text-2xl font-black"
-              style={{ color: BRAND_RED }}
-            >
-              //
-            </span>
-          </div>
-          <div className="flex items-center gap-2 mt-0.5">
-            <div
-              className="h-px flex-1"
-              style={{ backgroundColor: BRAND_RED }}
-            />
-            <span className="text-xs tracking-[0.25em] text-gray-500 uppercase">
-              Events
-            </span>
-            <div
-              className="h-px flex-1"
-              style={{ backgroundColor: BRAND_RED }}
-            />
-          </div>
-          <p className="text-gray-600 text-xs mt-1 tracking-widest uppercase">
-            IMS
-          </p>
-        </div>
+      <div className="p-5 border-b flex justify-center" style={{ borderColor: "#1a1a1a" }}>
+        <Image
+          src="/elroyy-logo.png"
+          alt="Elroyy Events"
+          width={140} height={60}
+          className="object-contain"
+          priority
+        />
+      </div>
+
+      <div className="px-5 py-2 border-b" style={{ borderColor: "#1a1a1a" }}>
+        <p className="text-xs tracking-widest text-gray-600 uppercase text-center">
+          Inventory Management
+        </p>
       </div>
 
       {/* Nav */}
@@ -79,12 +57,10 @@ export default function Sidebar({ user }: { user: User }) {
               href={href}
               className={cn(
                 "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all",
-                active
-                  ? "text-white"
-                  : "text-gray-500 hover:text-white hover:bg-white/5"
+                active ? "text-white" : "text-gray-500 hover:text-white hover:bg-white/5"
               )}
               style={active ? {
-                backgroundColor: "#1a0a0a",
+                backgroundColor: "#1a0808",
                 borderLeft: `3px solid ${BRAND_RED}`,
                 paddingLeft: "calc(0.75rem - 3px)"
               } : {}}
@@ -95,10 +71,7 @@ export default function Sidebar({ user }: { user: User }) {
               />
               {label}
               {active && (
-                <ChevronRight
-                  className="h-3 w-3 ml-auto"
-                  style={{ color: BRAND_RED }}
-                />
+                <ChevronRight className="h-3 w-3 ml-auto" style={{ color: BRAND_RED }} />
               )}
             </Link>
           );
@@ -106,10 +79,7 @@ export default function Sidebar({ user }: { user: User }) {
       </nav>
 
       {/* User */}
-      <div
-        className="p-4 border-t"
-        style={{ borderColor: "#1a1a1a" }}
-      >
+      <div className="p-4 border-t" style={{ borderColor: "#1a1a1a" }}>
         <div className="flex items-center gap-3 mb-3">
           <div
             className="rounded-full h-8 w-8 flex items-center justify-center text-sm font-bold text-white flex-shrink-0"
@@ -118,16 +88,10 @@ export default function Sidebar({ user }: { user: User }) {
             {user.full_name.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium text-white truncate">
-              {user.full_name}
-            </p>
+            <p className="text-sm font-medium text-white truncate">{user.full_name}</p>
             <span
               className="text-xs px-1.5 py-0.5 rounded font-medium"
-              style={{
-                backgroundColor: "#1a0a0a",
-                color: BRAND_RED,
-                border: `1px solid ${BRAND_RED}33`
-              }}
+              style={{ backgroundColor: "#1a0808", color: BRAND_RED, border: `1px solid ${BRAND_RED}33` }}
             >
               {user.role}
             </span>
