@@ -5,6 +5,7 @@ from api.inventory.routes import inventory_bp
 from api.reports.routes import reports_bp
 from api.job_cards.routes import job_cards_bp
 from api.events.routes import events_bp
+from api.damages.routes import damages_bp
 
 api = Blueprint("api", __name__)
 
@@ -20,3 +21,4 @@ def register_routes(app):
     app.register_blueprint(reports_bp)
     app.register_blueprint(job_cards_bp)
     app.register_blueprint(events_bp)
+    app.register_blueprint(damages_bp)
