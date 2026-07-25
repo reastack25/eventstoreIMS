@@ -1,5 +1,3 @@
-// src/types/job-card.ts
-
 export interface JobCardItem {
   id:                 number;
   item_id:            number;
@@ -10,11 +8,12 @@ export interface JobCardItem {
 }
 
 export interface JobCard {
-  id:          number;
-  reference:   string;
-  event_id:    number;
-  status:      "DRAFT" | "DISPATCHED" | "RETURNED" | "CLOSED";
-  notes:       string;
-  created_at:  string;
-  items:       JobCardItem[];
+  id:         number;
+  reference:  string;
+  event_id:   number;
+  event_name: string | null;
+  status:     "DRAFT" | "DISPATCHED" | "RETURNED" | "CLOSED";
+  notes:      string;
+  created_at: string;
+  items:      JobCardItem[];
 }

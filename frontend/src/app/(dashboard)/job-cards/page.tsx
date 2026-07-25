@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { JobCard } from "@/types/job-card";
 import { Card, CardContent } from "@/components/ui/card";
@@ -12,7 +12,6 @@ import {
   TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { ClipboardList, ChevronDown, ChevronUp, Plus, X, Trash2 } from "lucide-react";
-import React from "react";
 
 const statusColors: Record<string, string> = {
   DRAFT:      "bg-slate-100 text-slate-600",
@@ -21,25 +20,30 @@ const statusColors: Record<string, string> = {
   CLOSED:     "bg-purple-100 text-purple-700",
 };
 
-interface Event { id: number; name: string; }
-interface Item  { id: number; name: string; code: string; available: number; }
+interface Event    { id: number; name: string; }
+interface Item     { id: number; name: string; code: string; available: number; }
 interface LineItem { item_id: string; quantity: string; }
+interface ReturnLine { item_id: number; quantity_returned: number; quantity_damaged: number; }
 
 export default function JobCardsPage() {
-  const [jobCards, setJobCards]     = useState<JobCard[]>([]);
-  const [events, setEvents]         = useState<Event[]>([]);
-  const [items, setItems]           = useState<Item[]>([]);
-  const [loading, setLoading]       = useState(true);
-  const [expanded, setExpanded]     = useState<number | null>(null);
-  const [showForm, setShowForm]     = useState(false);
-  const [saving, setSaving]         = useState(false);
-  const [error, setError]           = useState<string | null>(null);
+  const [jobCards, setJobCards]       = useState<JobCard[]>([]);
+  const [events, setEvents]           = useState<Event[]>([]);
+  const [items, setItems]             = useState<Item[]>([]);
+  const [loading, setLoading]         = useState(true);
+  const [expanded, setExpanded]       = useState<number | null>(null);
+  const [showForm, setShowForm]       = useState(false);
+  const [returningId, setReturningId] = useState<number | null>(null);
+  const [saving, setSaving]           = useState(false);
+  const [error, setError]             = useState<string | null>(null);
+  const [returnError, setReturnError] = useState<string | null>(null);
 
   const [form, setForm] = useState({
     event_id: "",
-    notes: "",
-    lines: [{ item_id: "", quantity: "" }] as LineItem[]
+    notes:    "",
+    lines:    [{ item_id: "", quantity: "" }] as LineItem[]
   });
+
+  const [returnLines, setReturnLines] = useState<ReturnLine[]>([]);
 
   const fetchAll = () => {
     setLoading(true);
@@ -57,10 +61,8 @@ export default function JobCardsPage() {
 
   useEffect(() => { fetchAll(); }, []);
 
-  const addLine = () => setForm(f => ({ ...f, lines: [...f.lines, { item_id: "", quantity: "" }] }));
-
+  const addLine    = () => setForm(f => ({ ...f, lines: [...f.lines, { item_id: "", quantity: "" }] }));
   const removeLine = (i: number) => setForm(f => ({ ...f, lines: f.lines.filter((_, idx) => idx !== i) }));
-
   const updateLine = (i: number, field: keyof LineItem, value: string) =>
     setForm(f => ({ ...f, lines: f.lines.map((l, idx) => idx === i ? { ...l, [field]: value } : l) }));
 
@@ -93,6 +95,33 @@ export default function JobCardsPage() {
     }
   };
 
+  const openReturn = (jc: JobCard) => {
+    setReturningId(jc.id);
+    setReturnLines(jc.items.map(i => ({
+      item_id:           i.item_id,
+      quantity_returned: i.quantity_requested,
+      quantity_damaged:  0,
+    })));
+    setReturnError(null);
+  };
+
+  const handleReturn = async () => {
+    if (!returningId) return;
+    setSaving(true);
+    setReturnError(null);
+    try {
+      await api.post(`/api/v1/job-cards/${returningId}/return`, {
+        returns: returnLines
+      });
+      setReturningId(null);
+      fetchAll();
+    } catch (err: any) {
+      setReturnError(err.response?.data?.error || "Return failed");
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -115,7 +144,6 @@ export default function JobCardsPage() {
                 <X className="h-4 w-4 text-slate-400 hover:text-slate-600" />
               </button>
             </div>
-
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -132,7 +160,6 @@ export default function JobCardsPage() {
                     ))}
                   </select>
                 </div>
-
                 <div className="space-y-2">
                   <Label>Notes</Label>
                   <Input
@@ -143,7 +170,6 @@ export default function JobCardsPage() {
                 </div>
               </div>
 
-              {/* Line Items */}
               <div>
                 <Label className="mb-2 block">Items to Dispatch *</Label>
                 <div className="space-y-2">
@@ -163,13 +189,10 @@ export default function JobCardsPage() {
                         ))}
                       </select>
                       <Input
-                        type="number"
-                        placeholder="Qty"
-                        className="w-24"
+                        type="number" placeholder="Qty" className="w-24"
                         value={line.quantity}
                         onChange={e => updateLine(i, "quantity", e.target.value)}
-                        required
-                        min={1}
+                        required min={1}
                       />
                       {form.lines.length > 1 && (
                         <button type="button" onClick={() => removeLine(i)}>
@@ -189,16 +212,80 @@ export default function JobCardsPage() {
                   {error}
                 </div>
               )}
-
               <div className="flex gap-3 justify-end">
-                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>
-                  Cancel
-                </Button>
-                <Button type="submit" disabled={saving}>
-                  {saving ? "Creating..." : "Create Job Card"}
-                </Button>
+                <Button type="button" variant="outline" onClick={() => setShowForm(false)}>Cancel</Button>
+                <Button type="submit" disabled={saving}>{saving ? "Creating..." : "Create Job Card"}</Button>
               </div>
             </form>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Return Items Form */}
+      {returningId && (
+        <Card className="mb-6 border-green-200">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="font-semibold text-slate-900">Process Return</h2>
+              <button onClick={() => setReturningId(null)}>
+                <X className="h-4 w-4 text-slate-400 hover:text-slate-600" />
+              </button>
+            </div>
+            <div className="space-y-3">
+              <div className="grid grid-cols-4 gap-3 text-xs font-medium text-slate-500 uppercase tracking-wide pb-1 border-b">
+                <span>Item</span>
+                <span className="text-center">Dispatched</span>
+                <span className="text-center">Returned</span>
+                <span className="text-center">Damaged</span>
+              </div>
+              {returnLines.map((line, i) => {
+                const jc   = jobCards.find(j => j.id === returningId);
+                const item = jc?.items[i];
+                return (
+                  <div key={i} className="grid grid-cols-4 gap-3 items-center">
+                    <span className="text-sm font-medium text-slate-700">
+                      {item?.item_name}
+                    </span>
+                    <span className="text-center text-sm text-slate-500">
+                      {item?.quantity_requested}
+                    </span>
+                    <Input
+                      type="number" className="text-center" min={0}
+                      max={item?.quantity_requested}
+                      value={line.quantity_returned}
+                      onChange={e => setReturnLines(ls => ls.map((l, idx) =>
+                        idx === i ? {...l, quantity_returned: parseInt(e.target.value)||0} : l
+                      ))}
+                    />
+                    <Input
+                      type="number" className="text-center" min={0}
+                      max={item?.quantity_requested}
+                      value={line.quantity_damaged}
+                      onChange={e => setReturnLines(ls => ls.map((l, idx) =>
+                        idx === i ? {...l, quantity_damaged: parseInt(e.target.value)||0} : l
+                      ))}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+
+            {returnError && (
+              <div className="text-sm text-red-600 bg-red-50 border border-red-200 px-3 py-2 rounded mt-3">
+                {returnError}
+              </div>
+            )}
+
+            <div className="flex gap-3 justify-end mt-4">
+              <Button variant="outline" onClick={() => setReturningId(null)}>Cancel</Button>
+              <Button
+                className="bg-green-600 hover:bg-green-700"
+                onClick={handleReturn}
+                disabled={saving}
+              >
+                {saving ? "Processing..." : "Confirm Return"}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       )}
@@ -237,7 +324,9 @@ export default function JobCardsPage() {
                   <React.Fragment key={jc.id}>
                     <TableRow>
                       <TableCell className="font-mono font-medium">{jc.reference}</TableCell>
-                      <TableCell className="text-slate-500">Event #{jc.event_id}</TableCell>
+                      <TableCell className="font-medium text-slate-700">
+                        {jc.event_name || `Event #${jc.event_id}`}
+                      </TableCell>
                       <TableCell>
                         <span className={`text-xs px-2 py-1 rounded-full font-medium ${statusColors[jc.status]}`}>
                           {jc.status}
@@ -247,11 +336,23 @@ export default function JobCardsPage() {
                         {new Date(jc.created_at).toLocaleDateString()}
                       </TableCell>
                       <TableCell>
-                        {jc.status === "DRAFT" && (
-                          <Button size="sm" onClick={() => handleDispatch(jc.id)}>
-                            Dispatch
-                          </Button>
-                        )}
+                        <div className="flex gap-2">
+                          {jc.status === "DRAFT" && (
+                            <Button size="sm" onClick={() => handleDispatch(jc.id)}>
+                              Dispatch
+                            </Button>
+                          )}
+                          {jc.status === "DISPATCHED" && (
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              className="text-green-600 border-green-300 hover:bg-green-50"
+                              onClick={() => openReturn(jc)}
+                            >
+                              Return Items
+                            </Button>
+                          )}
+                        </div>
                       </TableCell>
                       <TableCell>
                         <Button
@@ -266,7 +367,7 @@ export default function JobCardsPage() {
                     </TableRow>
 
                     {expanded === jc.id && (
-                      <TableRow key={`${jc.id}-items`}>
+                      <TableRow>
                         <TableCell colSpan={6} className="bg-slate-50 p-4">
                           <p className="text-sm font-medium text-slate-700 mb-2">Items</p>
                           <table className="w-full text-sm">
