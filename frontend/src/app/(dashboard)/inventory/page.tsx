@@ -3,33 +3,30 @@
 import { useEffect, useState } from "react";
 import api from "@/lib/api";
 import { Item } from "@/types/inventory";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell,
+  TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
-import { Search, Package, ArrowDown, ArrowUp } from "lucide-react";
+import { Search, Package, QrCode } from "lucide-react";
+import QRModal from "@/components/shared/QRModal";
 
 export default function InventoryPage() {
-  const [items, setItems]       = useState<Item[]>([]);
-  const [search, setSearch]     = useState("");
-  const [loading, setLoading]   = useState(true);
-  const [page, setPage]         = useState(1);
+  const [items, setItems]         = useState<Item[]>([]);
+  const [search, setSearch]       = useState("");
+  const [loading, setLoading]     = useState(true);
+  const [page, setPage]           = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [qrItem, setQrItem]       = useState<{ id: number; code: string; name: string } | null>(null);
 
   const fetchItems = (p = 1, q = "") => {
     setLoading(true);
     api.get("/api/v1/inventory/", {
       params: { page: p, per_page: 20, search: q }
     })
-      .then((res) => {
+      .then(res => {
         setItems(res.data.items);
         setTotalPages(res.data.meta.total_pages);
       })
@@ -55,12 +52,12 @@ export default function InventoryPage() {
 
   return (
     <div>
+      <QRModal item={qrItem} onClose={() => setQrItem(null)} />
+
       <div className="flex items-center justify-between mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-900">Inventory</h1>
-          <p className="text-slate-500 text-sm mt-1">
-            Manage your stock items
-          </p>
+          <p className="text-slate-500 text-sm mt-1">Manage your stock items</p>
         </div>
       </div>
 
@@ -101,25 +98,20 @@ export default function InventoryPage() {
                   <TableHead className="text-right">Quantity</TableHead>
                   <TableHead className="text-right">Available</TableHead>
                   <TableHead>Status</TableHead>
+                  <TableHead></TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {items.map((item) => (
+                {items.map(item => (
                   <TableRow key={item.id}>
                     <TableCell className="font-mono text-sm text-slate-500">
                       {item.code}
                     </TableCell>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell className="text-slate-500">{item.unit}</TableCell>
-                    <TableCell className="text-right font-medium">
-                      {item.quantity}
-                    </TableCell>
+                    <TableCell className="text-right font-medium">{item.quantity}</TableCell>
                     <TableCell className="text-right">
-                      <span className={
-                        item.available < 10
-                          ? "text-red-600 font-medium"
-                          : "text-green-600 font-medium"
-                      }>
+                      <span className={item.available < 10 ? "text-red-600 font-medium" : "text-green-600 font-medium"}>
                         {item.available}
                       </span>
                     </TableCell>
@@ -128,28 +120,35 @@ export default function InventoryPage() {
                         {item.status}
                       </span>
                     </TableCell>
+                    <TableCell>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-slate-400 hover:text-slate-700"
+                        onClick={() => setQrItem({ id: item.id, code: item.code, name: item.name })}
+                      >
+                        <QrCode className="h-4 w-4" />
+                      </Button>
+                    </TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           )}
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-4 pt-4 border-t">
               <p className="text-sm text-slate-500">Page {page} of {totalPages}</p>
               <div className="flex gap-2">
                 <Button
-                  variant="outline"
-                  size="sm"
+                  variant="outline" size="sm"
                   onClick={() => { setPage(p => p - 1); fetchItems(page - 1, search); }}
                   disabled={page === 1}
                 >
                   Previous
                 </Button>
                 <Button
-                  variant="outline"
-                  size="sm"
+                  variant="outline" size="sm"
                   onClick={() => { setPage(p => p + 1); fetchItems(page + 1, search); }}
                   disabled={page === totalPages}
                 >

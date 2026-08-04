@@ -8,7 +8,8 @@ import { User } from "@/types/auth";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, Package, ClipboardList,
-  Calendar, AlertTriangle, BarChart2, LogOut, ChevronRight
+  Calendar, AlertTriangle, BarChart2,
+  Users, LogOut, ChevronRight
 } from "lucide-react";
 
 const navItems = [
@@ -17,6 +18,7 @@ const navItems = [
   { href: "/job-cards", label: "Job Cards",  icon: ClipboardList },
   { href: "/events",    label: "Events",     icon: Calendar },
   { href: "/damages",   label: "Damage Log", icon: AlertTriangle },
+  { href: "/staff",     label: "Staff",      icon: Users },
   { href: "/reports",   label: "Reports",    icon: BarChart2 },
 ];
 
