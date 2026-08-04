@@ -8,7 +8,7 @@ import { User } from "@/types/auth";
 import { cn } from "@/lib/utils";
 import {
   LayoutDashboard, Package, ClipboardList,
-  Calendar, AlertTriangle, LogOut, ChevronRight
+  Calendar, AlertTriangle, BarChart2, LogOut, ChevronRight
 } from "lucide-react";
 
 const navItems = [
@@ -17,6 +17,7 @@ const navItems = [
   { href: "/job-cards", label: "Job Cards",  icon: ClipboardList },
   { href: "/events",    label: "Events",     icon: Calendar },
   { href: "/damages",   label: "Damage Log", icon: AlertTriangle },
+  { href: "/reports",   label: "Reports",    icon: BarChart2 },
 ];
 
 const BRAND_RED = "#e63329";
@@ -30,7 +31,6 @@ export default function Sidebar({ user }: { user: User }) {
       className="w-64 flex flex-col h-screen border-r"
       style={{ backgroundColor: "#0a0a0a", borderColor: "#1a1a1a" }}
     >
-      {/* Logo */}
       <div className="p-5 border-b flex justify-center" style={{ borderColor: "#1a1a1a" }}>
         <Image
           src="/elroyy-logo.png"
@@ -47,8 +47,7 @@ export default function Sidebar({ user }: { user: User }) {
         </p>
       </div>
 
-      {/* Nav */}
-      <nav className="flex-1 p-4 space-y-1">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {navItems.map(({ href, label, icon: Icon }) => {
           const active = pathname === href;
           return (
@@ -65,20 +64,14 @@ export default function Sidebar({ user }: { user: User }) {
                 paddingLeft: "calc(0.75rem - 3px)"
               } : {}}
             >
-              <Icon
-                className="h-4 w-4 flex-shrink-0"
-                style={active ? { color: BRAND_RED } : {}}
-              />
+              <Icon className="h-4 w-4 flex-shrink-0" style={active ? { color: BRAND_RED } : {}} />
               {label}
-              {active && (
-                <ChevronRight className="h-3 w-3 ml-auto" style={{ color: BRAND_RED }} />
-              )}
+              {active && <ChevronRight className="h-3 w-3 ml-auto" style={{ color: BRAND_RED }} />}
             </Link>
           );
         })}
       </nav>
 
-      {/* User */}
       <div className="p-4 border-t" style={{ borderColor: "#1a1a1a" }}>
         <div className="flex items-center gap-3 mb-3">
           <div
