@@ -1,48 +1,41 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, jsonify, make_response
 from flask_jwt_extended import jwt_required
+from services.report_service import ReportService
 
-from models.item import Item
-from models.category import Category
-from models.damage_log import DamageLog
-from models.inventory_transaction import InventoryTransaction
-from extensions import db
-
-reports_bp = Blueprint(
-    "reports",
-    __name__,
-    url_prefix="/api/v1/dashboard"
-)
+reports_bp = Blueprint("reports", __name__, url_prefix="/api/v1/dashboard")
 
 @reports_bp.route("/summary", methods=["GET"])
 @jwt_required()
 def summary():
+    data = ReportService.get_dashboard_summary()
+    return jsonify(data), 200
 
-    total_items      = Item.query.filter_by(status="ACTIVE").count()
-    total_categories = Category.query.count()
+@reports_bp.route("/weekly", methods=["GET"])
+@jwt_required()
+def weekly_report():
+    data = ReportService.get_weekly_report()
+    return jsonify(data), 200
 
-    # Items where available stock is below 10
-    low_stock        = Item.query.filter(Item.available < 10).count()
+@reports_bp.route("/monthly", methods=["GET"])
+@jwt_required()
+def monthly_report():
+    data = ReportService.get_monthly_report()
+    return jsonify(data), 200
 
-    # Total damaged quantity from damage logs
-    damaged_items    = db.session.query(
-        db.func.sum(DamageLog.quantity)
-    ).scalar() or 0
+@reports_bp.route("/export/inventory", methods=["GET"])
+@jwt_required()
+def export_inventory():
+    csv_data = ReportService.export_inventory_csv()
+    response = make_response(csv_data)
+    response.headers["Content-Disposition"] = "attachment; filename=inventory.csv"
+    response.headers["Content-Type"] = "text/csv"
+    return response
 
-    # Dispatched items with no matching return yet
-    dispatched = db.session.query(
-        db.func.sum(InventoryTransaction.quantity)
-    ).filter_by(transaction_type="DISPATCH").scalar() or 0
-
-    returned = db.session.query(
-        db.func.sum(InventoryTransaction.quantity)
-    ).filter_by(transaction_type="RETURN").scalar() or 0
-
-    pending_returns = max(dispatched - returned, 0)
-
-    return jsonify({
-        "total_items":      total_items,
-        "total_categories": total_categories,
-        "low_stock":        low_stock,
-        "damaged_items":    damaged_items,
-        "pending_returns":  pending_returns
-    }), 200
+@reports_bp.route("/export/damages", methods=["GET"])
+@jwt_required()
+def export_damages():
+    csv_data = ReportService.export_damages_csv()
+    response = make_response(csv_data)
+    response.headers["Content-Disposition"] = "attachment; filename=damages.csv"
+    response.headers["Content-Type"] = "text/csv"
+    return response
