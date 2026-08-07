@@ -17,14 +17,15 @@ class JobCard(BaseModel):
 
     def to_dict(self):
         return {
-            "id":          self.id,
-            "reference":   self.reference,
-            "event_id":    self.event_id,
-            "event_name":  self.event.name if self.event else None,
-            "assigned_to": self.assigned_to,
-            "status":      self.status,
-            "notes":       self.notes,
-            "created_by":  self.created_by,
-            "created_at":  self.created_at.isoformat(),
-            "items":       [i.to_dict() for i in self.items]
+            "id":            self.id,
+            "reference":     self.reference,
+            "event_id":      self.event_id,
+            "event_name":    self.event.name if self.event else None,
+            "assigned_to":   self.assigned_to,
+            "assigned_name": self.assignee.full_name if self.assignee else None,
+            "status":        self.status,
+            "notes":         self.notes,
+            "created_by":    self.created_by,
+            "created_at":    self.created_at.isoformat(),
+            "items":         [i.to_dict() for i in self.items]
         }
