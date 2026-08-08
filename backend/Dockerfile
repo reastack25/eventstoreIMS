@@ -7,6 +7,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+RUN chmod +x start.sh
+
 EXPOSE 5000
 
-CMD ["sh", "-c", "flask db upgrade && gunicorn --bind 0.0.0.0:${PORT:-5000} 'app:create_app()'"]
+CMD ["bash", "start.sh"]
