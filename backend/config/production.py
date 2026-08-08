@@ -1,11 +1,12 @@
+import os
 from config.base import BaseConfig
 
 class ProductionConfig(BaseConfig):
-
     DEBUG = False
 
-    API_TITLE          = "EventStore IMS API"
-    API_VERSION        = "v1"
-    OPENAPI_VERSION    = "3.0.3"
-    OPENAPI_URL_PREFIX = "/"
-    
+    # Fix Railway postgres:// -> postgresql://
+    db_url = os.getenv("DATABASE_URL", "")
+    if db_url.startswith("postgres://"):
+        db_url = db_url.replace("postgres://", "postgresql://", 1)
+
+    SQLALCHEMY_DATABASE_URI = db_url
