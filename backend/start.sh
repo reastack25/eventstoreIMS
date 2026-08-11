@@ -1,8 +1,19 @@
 #!/bin/bash
-set -e
+echo "=== Starting Elroyy IMS Backend ==="
+echo "PORT: $PORT"
+echo "FLASK_ENV: $FLASK_ENV"
 
-echo "Running migrations..."
-flask db upgrade
+# Try migrations but don't fail if they error
+echo "=== Running migrations ==="
+flask db upgrade && echo "Migrations OK" || echo "Migration failed - continuing"
 
-echo "Starting gunicorn on port $PORT..."
-exec gunicorn --bind "0.0.0.0:$PORT" --workers 2 --timeout 120 "app:create_app()"
+# Start gunicorn
+echo "=== Starting gunicorn on port $PORT ==="
+exec gunicorn \
+  --bind "0.0.0.0:${PORT}" \
+  --workers 1 \
+  --timeout 120 \
+  --log-level debug \
+  --access-logfile - \
+  --error-logfile - \
+  "app:create_app()"
